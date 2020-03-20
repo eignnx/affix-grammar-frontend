@@ -26,7 +26,6 @@ export default {
     config: {
       deep: true,
       handler() {
-        console.log("RELOAD");
         this.$refs["aceEditor"].reload();
       }
     }
