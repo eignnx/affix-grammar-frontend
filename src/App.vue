@@ -40,7 +40,7 @@
                 v-if="ctx !== null && noMoreSentences"
               >
                 <v-icon>mdi-plus</v-icon>
-                More Iterations
+                Deeper Search {{ ctx !== null ? `(${ctx.maxTrials * 2})` : `` }}
               </v-btn>
 
               <v-btn class="mx-2" @click="generate" v-else>
@@ -179,7 +179,7 @@ export default {
     },
 
     doubleMaxIters() {
-      this.ctx.set_max_trials(10000); // TODO: actually impl
+      this.ctx.maxTrials *= 2;
       this.noMoreSentences = false;
     }
   },
