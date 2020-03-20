@@ -28,7 +28,6 @@
 
     <v-content>
       <v-container fluid>
-        {{ config.useVim }}
         <v-row>
           <v-col>
             <v-toolbar>
@@ -37,16 +36,16 @@
 
               <v-btn
                 class="mx-2"
-                @click="generate"
-                :disabled="ctx !== null && noMoreSentences"
+                @click="doubleMaxIters"
+                v-if="ctx !== null && noMoreSentences"
               >
-                <v-icon>mdi-play</v-icon>
-                Generate
+                <v-icon>mdi-plus</v-icon>
+                More Iterations
               </v-btn>
 
-              <v-btn class="mx-2" @click="doubleMaxIters">
-                <v-icon>mdi-plus</v-icon>
-                Increase Iterations
+              <v-btn class="mx-2" @click="generate" v-else>
+                <v-icon>mdi-play</v-icon>
+                Generate
               </v-btn>
 
               <v-switch
