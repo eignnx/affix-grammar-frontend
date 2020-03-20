@@ -34,20 +34,6 @@
               <v-toolbar-title>Edit</v-toolbar-title>
               <v-spacer></v-spacer>
 
-              <v-btn
-                class="mx-2"
-                @click="doubleMaxIters"
-                v-if="ctx !== null && noMoreSentences"
-              >
-                <v-icon>mdi-plus</v-icon>
-                Deeper Search {{ ctx !== null ? `(${ctx.maxTrials * 2})` : `` }}
-              </v-btn>
-
-              <v-btn class="mx-2" @click="generate" v-else>
-                <v-icon>mdi-play</v-icon>
-                Generate
-              </v-btn>
-
               <v-switch
                 v-model="config.useVim"
                 label="Vim Keybindings"
@@ -62,7 +48,23 @@
           <v-col>
             <v-card class="mx-auto">
               <v-list>
-                <v-subheader>Generated Sentences</v-subheader>
+                <template>
+                  <v-btn
+                    class="mx-2"
+                    @click="doubleMaxIters"
+                    v-if="ctx !== null && noMoreSentences"
+                  >
+                    <v-icon>mdi-plus</v-icon>
+                    Deeper Search
+                    {{ ctx !== null ? `(${ctx.maxTrials * 2})` : `` }}
+                  </v-btn>
+
+                  <v-btn class="mx-2" @click="generate" v-else>
+                    <v-icon>mdi-play</v-icon>
+                    Generate
+                  </v-btn>
+                </template>
+                <v-subheader>Generated Sentences </v-subheader>
                 <v-list-item-group>
                   <template
                     v-for="(sentence, index) in sentences.slice().reverse()"
