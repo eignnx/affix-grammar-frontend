@@ -137,7 +137,7 @@ export default {
       // Language
       lang: "haskell",
       // Theme
-      theme: "katzenmilch",
+      theme: "github",
       // only read.
       readOnly: false,
       // enable Autocompletion
