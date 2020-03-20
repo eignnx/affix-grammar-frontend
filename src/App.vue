@@ -27,7 +27,8 @@
     </v-app-bar>
 
     <v-content>
-      <v-container class="fill-height" fluid>
+      <v-container fluid>
+        {{ config.useVim }}
         <v-row>
           <v-col>
             <v-toolbar>
@@ -47,12 +48,17 @@
                 <v-icon>mdi-plus</v-icon>
                 Increase Iterations
               </v-btn>
+
+              <v-switch
+                v-model="config.useVim"
+                label="Vim Keybindings"
+              ></v-switch>
             </v-toolbar>
           </v-col>
         </v-row>
         <v-row>
           <v-col>
-            <Editor v-model="src" @dirty="ctx = null" />
+            <Editor v-model="src" @dirty="ctx = null" :config="config" />
           </v-col>
           <v-col>
             <v-card class="mx-auto">
@@ -117,10 +123,33 @@ rule start
   | "Γειά σου Κόσμε!"
   | "Bonjour le monde!"
     `.trim(),
-    dirty: false,
     sentences: [],
     ctx: null,
-    noMoreSentences: false
+    noMoreSentences: false,
+    config: {
+      // Language
+      lang: "haskell",
+      // Theme
+      theme: "katzenmilch",
+      // only read.
+      readOnly: false,
+      // enable Autocompletion
+      autoCompletion: false,
+      showPrintMargin: false,
+      useWrapMode: true,
+      useSoftTabs: true,
+      tabSize: 4,
+      // enable vim keyboard
+      useVim: false,
+      // enable emmet.
+      useEmmet: false,
+      // enable beautify code.
+      useBeautifyCode: false,
+      // set cursor position.
+      cursorPosition: { row: 0, column: 0 },
+      // set page position (scroll).
+      pagePosition: 0
+    }
   }),
 
   methods: {

@@ -1,14 +1,7 @@
 <template>
-  <v-textarea
-    solo
-    v-model="src"
-    name="source-text"
-    id="src-txt"
-    rows="10"
-    no-resize
-    auto-grow
-    placeholder="Your grammar goes here..."
-  ></v-textarea>
+  <div id="ace-editor-wrapper">
+    <AceEditor v-model="src" :config="config" ref="aceEditor" />
+  </div>
 </template>
 
 <script>
@@ -25,7 +18,18 @@ const computedEmitter = {
 export default {
   name: "Editor",
   props: {
-    value: String
+    value: String,
+    config: Object
+  },
+
+  watch: {
+    config: {
+      deep: true,
+      handler() {
+        console.log("RELOAD");
+        this.$refs["aceEditor"].reload();
+      }
+    }
   },
 
   computed: {
@@ -35,8 +39,7 @@ export default {
 </script>
 
 <style>
-#src-txt {
-  font-family: monospace;
-  font-weight: bolder;
+#ace-editor-wrapper {
+  height: 65vh;
 }
 </style>
