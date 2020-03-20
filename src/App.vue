@@ -110,7 +110,13 @@ const HELLO_WORLD_EXAMPLE = `
 rule start
   = "Hello, World!"
   | "¡Hola Mundo!"
+  | "こんにちは世界！"
+  | "مرحبا بالعالم!"
+  | "Salamu, Dunia!"
+  | "ياخشىمۇسىز دۇنيا!"
   | "Γειά σου Κόσμε!"
+  | "Привіт Світ!"
+  | "สวัสดีชาวโลก!"
   | "Bonjour le monde!"
 `.trim();
 
