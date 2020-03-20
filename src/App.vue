@@ -106,6 +106,14 @@ import("affix-grammar-js").then(module => {
   ParserContext = module.ParserContext;
 });
 
+const HELLO_WORLD_EXAMPLE = `
+rule start
+  = "Hello, World!"
+  | "¡Hola Mundo!"
+  | "Γειά σου Κόσμε!"
+  | "Bonjour le monde!"
+`.trim();
+
 export default {
   name: "App",
 
@@ -115,13 +123,7 @@ export default {
 
   data: () => ({
     drawer: false,
-    src: `
-rule start
-  = "Hello, World!"
-  | "¡Hola Mundo!"
-  | "Γειά σου Κόσμε!"
-  | "Bonjour le monde!"
-    `.trim(),
+    src: HELLO_WORLD_EXAMPLE,
     sentences: [],
     ctx: null,
     noMoreSentences: false,
