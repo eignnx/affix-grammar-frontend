@@ -34,7 +34,11 @@
               <v-toolbar-title>Edit</v-toolbar-title>
               <v-spacer></v-spacer>
 
-              <v-btn class="mx-2" @click="generate" :disabled="noMoreSentences">
+              <v-btn
+                class="mx-2"
+                @click="generate"
+                :disabled="ctx !== null && noMoreSentences"
+              >
                 <v-icon>mdi-play</v-icon>
                 Generate
               </v-btn>
@@ -48,17 +52,17 @@
         </v-row>
         <v-row>
           <v-col>
-            <Editor v-model="src" />
+            <Editor v-model="src" @dirty="ctx = null" />
           </v-col>
           <v-col>
-            <v-card class="mx-auto" tile>
+            <v-card class="mx-auto">
               <v-list>
                 <v-subheader>Generated Sentences</v-subheader>
                 <v-list-item-group>
                   <template
                     v-for="(sentence, index) in sentences.slice().reverse()"
                   >
-                    <v-list-item :key="sentence">
+                    <v-list-item :key="sentence" :disabled="ctx === null">
                       <template>
                         <v-list-item-content>
                           <v-list-item-title v-text="sentence" />
@@ -113,6 +117,7 @@ rule start
   | "Γειά σου Κόσμε!"
   | "Bonjour le monde!"
     `.trim(),
+    dirty: false,
     sentences: [],
     ctx: null,
     noMoreSentences: false
@@ -122,6 +127,8 @@ rule start
     generate() {
       if (this.ctx === null) {
         this.ctx = new ParserContext(this.src);
+        this.sentences = [];
+        this.noMoreSentences = false;
       }
       try {
         const sentence = this.ctx.generate();

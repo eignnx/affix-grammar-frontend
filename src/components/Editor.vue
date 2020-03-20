@@ -17,6 +17,7 @@ const computedEmitter = {
     return this.value;
   },
   set(newValue) {
+    this.$emit("dirty", true);
     this.$emit("input", newValue);
   }
 };
