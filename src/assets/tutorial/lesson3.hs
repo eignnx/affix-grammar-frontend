@@ -19,8 +19,8 @@ rule some_sentence
     | they.masculine "ate too much."
     | they.neutral "flew away."
 
--- To define the `they` rule, we have to declare that a `Gender` must be
--- supplied.
+-- To define the `they` rule, we write `rule they.Gender` which declares that a
+-- `Gender` must be supplied.
 rule they.Gender =
     .nonbinary -> "They"
     .feminine -> "She"
@@ -30,9 +30,10 @@ rule they.Gender =
 -- We "pattern match" on the gender and specify what `they` should mean in each
 -- case.
 
--- But we can do better! All of those sentences make sense (more or less)
--- regardless of grammatical gender. So lets use an "unknown data variant",
--- or "variable".
+-- But we can do better! All of the sentences in the `some_sentence` rule
+-- make sense (more or less) regardless of grammatical gender. So lets use an
+-- "unknown data variant", or "variable" so that ANY gender could be used in
+-- ANY of those sentences.
 
 rule some_other_sentence
     = they.Gender "went to sleep."
@@ -40,9 +41,9 @@ rule some_other_sentence
     | they.Gen "ate too much."
     | they.G "flew away."
 
--- To use a variable, just type the name of the data variant! Note that as long
--- as it's not ambiguous, you can shorten the name to a substring of the
--- original name.
+-- To use a variable, just type the name of the data variant (in this case,
+-- Gender). Note that as long as it's not ambiguous, you can shorten the name
+-- to a substring of the original name.
 
 -- We can now generate 16 sentences instead of just 4!
 
