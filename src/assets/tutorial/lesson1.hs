@@ -1,5 +1,8 @@
 -- Hi! Welcome to Affix Grammar!
 
+-- Affix Grammar lets you generate sentences, stories, textual patterns and
+-- more! It's kinda like Mad Libs.
+
 -- Lets generate a simple sentence that has a few variations. An example of the
 -- kind of sentence we'll generate is:
 --   "Last Wednesday, Val went for a walk in the park after supper."
