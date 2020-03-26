@@ -31,7 +31,7 @@ rule place
 
 -- Also, notice that the last alternative of the `place` rule references
 -- itself. This is fine, as long as there is at least one (1)
--- non-self-referential alternatives as well.
+-- non-self-referential alternative as well.
 
 -- Ok! We've defined everything we need. Now press the `Generate` button to see
 -- the sentences that are generated!
