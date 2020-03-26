@@ -2,12 +2,25 @@ import Vue from "vue";
 import App from "./App.vue";
 import vuetify from "./plugins/vuetify";
 import AceEditor from "vue-editor-ace";
+const affix_grammar_js_module = import("affix-grammar-js");
 
-Vue.config.productionTip = false;
+async function setupAffixGrammar(Vue, affix_grammar_js_module) {
+  // Asynchronously wait for the module to load.
+  const affix_grammar_js = await affix_grammar_js_module;
 
-Vue.use(AceEditor);
+  // Attach the module to the Vue instance.
+  Vue.prototype.$wasm = { affix_grammar_js };
+}
 
-new Vue({
-  vuetify,
-  render: h => h(App)
-}).$mount("#app");
+(async function() {
+  await setupAffixGrammar(Vue, affix_grammar_js_module);
+
+  Vue.config.productionTip = false;
+
+  Vue.use(AceEditor);
+
+  new Vue({
+    vuetify,
+    render: h => h(App)
+  }).$mount("#app");
+})();

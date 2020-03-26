@@ -10,6 +10,11 @@
               <v-toolbar-title>Edit</v-toolbar-title>
               <v-spacer></v-spacer>
 
+              <v-btn-toggle v-model="displayMode">
+                <v-btn value="edit">Edit</v-btn>
+                <v-btn value="display">Display</v-btn>
+              </v-btn-toggle>
+
               <v-switch
                 v-model="config.useVim"
                 label="Vim Keybindings"
@@ -36,11 +41,10 @@
                   </v-btn>
 
                   <v-btn class="mx-2" @click="generate" v-else>
-                    <v-icon>mdi-play</v-icon>
-                    Generate
+                    <v-icon>mdi-play</v-icon>Generate
                   </v-btn>
                 </template>
-                <v-subheader>Generated Sentences </v-subheader>
+                <v-subheader>Generated Sentences</v-subheader>
                 <v-list-item-group>
                   <template
                     v-for="(sentence, index) in sentences.slice().reverse()"
@@ -68,6 +72,15 @@
             </v-card>
           </v-col>
         </v-row>
+
+        <v-row>
+          <v-col>
+            <div v-for="(block, idx) in blocks" :key="idx">
+              <p v-if="block.Explanation">{{ block.Explanation }}</p>
+              <code v-if="block.Code">{{ block.Code }}</code>
+            </div>
+          </v-col>
+        </v-row>
       </v-container>
     </v-content>
 
@@ -80,12 +93,12 @@
 <script>
 import Editor from "./components/Editor.vue";
 import NavigationDrawer from "./components/NavigationDrawer.vue";
-let ParserContext = null;
-import("affix-grammar-js").then(module => {
-  ParserContext = module.ParserContext;
-});
 
 const HELLO_WORLD_EXAMPLE = `
+-- Welcome to Affix Grammar!
+
+-- Click the "Generate" button a few times to see what sentences are produced!
+
 rule start
   = "Hello, World!"
   | "¡Hola Mundo!"
@@ -112,6 +125,7 @@ export default {
     sentences: [],
     ctx: null,
     noMoreSentences: false,
+    displayMode: "display",
     config: {
       // Language
       lang: "haskell",
@@ -140,6 +154,7 @@ export default {
 
   methods: {
     generate() {
+      const { ParserContext } = this.$wasm.affix_grammar_js;
       if (this.ctx === null) {
         this.ctx = new ParserContext(this.src);
         this.sentences = [];
@@ -160,6 +175,21 @@ export default {
     doubleMaxIters() {
       this.ctx.maxTrials *= 2;
       this.noMoreSentences = false;
+    }
+  },
+
+  computed: {
+    blocks() {
+      const { LiterateParser } = this.$wasm.affix_grammar_js;
+      const parser = new LiterateParser(this.src);
+      const arr = [];
+      let value = parser.next();
+      while (!value.done) {
+        const block = value.value;
+        arr.push(block);
+        value = parser.next();
+      }
+      return arr;
     }
   },
 
