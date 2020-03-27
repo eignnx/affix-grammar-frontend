@@ -10,6 +10,8 @@
               <v-toolbar-title>Edit</v-toolbar-title>
               <v-spacer></v-spacer>
 
+              <SentencesWindow :sentences="sentences" />
+
               <template>
                 <v-btn
                   class="mx-2"
@@ -76,39 +78,6 @@
             </v-tabs>
           </v-col>
         </v-row>
-
-        <v-row>
-          <v-col>
-            <v-card class="mx-auto">
-              <v-list>
-                <v-subheader>Generated Sentences</v-subheader>
-                <v-list-item-group>
-                  <template
-                    v-for="(sentence, index) in sentences.slice().reverse()"
-                  >
-                    <v-list-item :key="sentence" :disabled="ctx === null">
-                      <template>
-                        <v-list-item-content>
-                          <v-list-item-title v-text="sentence" />
-                        </v-list-item-content>
-                        <v-list-item-action>
-                          <v-list-item-action-text
-                            v-text="sentences.length - index"
-                          />
-                        </v-list-item-action>
-                      </template>
-                    </v-list-item>
-
-                    <v-divider
-                      v-if="index + 1 < sentences.length"
-                      :key="index"
-                    ></v-divider>
-                  </template>
-                </v-list-item-group>
-              </v-list>
-            </v-card>
-          </v-col>
-        </v-row>
       </v-container>
     </v-content>
 
@@ -121,6 +90,7 @@
 <script>
 import Editor from "./components/Editor.vue";
 import NavigationDrawer from "./components/NavigationDrawer.vue";
+import SentencesWindow from "./components/SentencesWindow.vue";
 
 const HELLO_WORLD_EXAMPLE = `
 -- Welcome to Affix Grammar!
@@ -153,7 +123,7 @@ export default {
     sentences: [],
     ctx: null,
     noMoreSentences: false,
-    displayMode: "display",
+    bottomSheet: true,
     config: {
       // Language
       lang: "haskell",
@@ -221,6 +191,6 @@ export default {
     }
   },
 
-  components: { Editor, NavigationDrawer }
+  components: { Editor, NavigationDrawer, SentencesWindow }
 };
 </script>
