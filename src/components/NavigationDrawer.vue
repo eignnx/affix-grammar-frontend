@@ -2,7 +2,11 @@
   <div>
     <v-navigation-drawer v-model="drawer" app clipped>
       <v-list dense>
-        <v-list-group v-model="savesOpen" prepend-icon="mdi-content-save" no-action>
+        <v-list-group
+          v-model="savesOpen"
+          prepend-icon="mdi-content-save"
+          no-action
+        >
           <template v-slot:activator>
             <v-list-item-content>
               <v-list-item-title v-text="'Saves'"></v-list-item-title>
@@ -52,6 +56,20 @@
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
+
+        <v-list-group v-model="settingsOpen" prepend-icon="mdi-cog" no-action>
+          <template v-slot:activator>
+            <v-list-item-content>
+              <v-list-item-title v-text="'Settings'"></v-list-item-title>
+            </v-list-item-content>
+          </template>
+
+          <v-list-item>
+            <v-list-item-content>
+              <v-switch v-model="useVim" label="Vim Keybindings"></v-switch>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
       </v-list>
     </v-navigation-drawer>
 
@@ -68,6 +86,7 @@ export default {
 
   data: () => ({
     drawer: false,
+    useVim: false,
     savesOpen: false,
     saves: [
       { title: "Test Grammar 1", key: "grammar1", modified: "Three days ago" },
@@ -77,7 +96,8 @@ export default {
         modified: "Feb 29, 2020"
       }
     ],
-    examplesOpen: false
+    examplesOpen: false,
+    settingsOpen: false
   })
 };
 </script>

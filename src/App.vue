@@ -10,40 +10,77 @@
               <v-toolbar-title>Edit</v-toolbar-title>
               <v-spacer></v-spacer>
 
-              <v-btn-toggle v-model="displayMode">
-                <v-btn value="edit">Edit</v-btn>
-                <v-btn value="display">Display</v-btn>
-              </v-btn-toggle>
+              <template>
+                <v-btn
+                  class="mx-2"
+                  @click="doubleMaxIters"
+                  v-if="ctx !== null && noMoreSentences"
+                >
+                  <v-icon>mdi-plus</v-icon>
+                  Deeper Search
+                  {{ ctx !== null ? `(${ctx.maxTrials * 2})` : `` }}
+                </v-btn>
 
-              <v-switch
-                v-model="config.useVim"
-                label="Vim Keybindings"
-              ></v-switch>
+                <v-btn class="mx-2" @click="generate" v-else>
+                  <v-icon>mdi-play</v-icon>Generate
+                </v-btn>
+              </template>
             </v-toolbar>
           </v-col>
         </v-row>
+
         <v-row>
           <v-col>
-            <Editor v-model="src" @dirty="ctx = null" :config="config" />
+            <v-tabs vertical color="pink">
+              <v-tab>
+                <v-icon left>mdi-book-open-variant</v-icon>
+                Read
+              </v-tab>
+              <v-tab>
+                <v-icon left>mdi-pencil</v-icon>
+                Edit
+              </v-tab>
+
+              <v-tab-item>
+                <v-card light flat>
+                  <v-card-text>
+                    <v-card v-for="(block, idx) in blocks" :key="idx">
+                      <v-card-text
+                        class="mb-3 body-1 font-weight-medium"
+                        v-if="block.Explanation"
+                      >
+                        {{ block.Explanation }}
+                      </v-card-text>
+                      <code
+                        style="width: 100%"
+                        class="pa-3"
+                        v-if="block.Code"
+                        >{{ block.Code }}</code
+                      >
+                    </v-card>
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
+
+              <v-tab-item>
+                <v-card light flat>
+                  <v-card-text>
+                    <Editor
+                      v-model="src"
+                      @dirty="ctx = null"
+                      :config="config"
+                    />
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
+            </v-tabs>
           </v-col>
+        </v-row>
+
+        <v-row>
           <v-col>
             <v-card class="mx-auto">
               <v-list>
-                <template>
-                  <v-btn
-                    class="mx-2"
-                    @click="doubleMaxIters"
-                    v-if="ctx !== null && noMoreSentences"
-                  >
-                    <v-icon>mdi-plus</v-icon>
-                    Deeper Search
-                    {{ ctx !== null ? `(${ctx.maxTrials * 2})` : `` }}
-                  </v-btn>
-
-                  <v-btn class="mx-2" @click="generate" v-else>
-                    <v-icon>mdi-play</v-icon>Generate
-                  </v-btn>
-                </template>
                 <v-subheader>Generated Sentences</v-subheader>
                 <v-list-item-group>
                   <template
@@ -70,15 +107,6 @@
                 </v-list-item-group>
               </v-list>
             </v-card>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col>
-            <div v-for="(block, idx) in blocks" :key="idx">
-              <p v-if="block.Explanation">{{ block.Explanation }}</p>
-              <code v-if="block.Code">{{ block.Code }}</code>
-            </div>
           </v-col>
         </v-row>
       </v-container>
