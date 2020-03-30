@@ -34,6 +34,9 @@ export default {
     SET_EDITOR_REF(state, ref) {
       state.editorRef = ref;
     },
+    SET_USE_VIM(state, value) {
+      state.config.useVim = value;
+    },
     RELOAD(state) {
       if (state.editorRef) state.editorRef.reload();
     },
