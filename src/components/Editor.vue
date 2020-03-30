@@ -1,6 +1,10 @@
 <template>
   <div id="ace-editor-wrapper">
-    <AceEditor v-model="src" :config="config" ref="aceEditor" />
+    <AceEditor
+      v-model="src"
+      :config="$store.state.AceConfig.config"
+      ref="aceEditor"
+    />
   </div>
 </template>
 
@@ -18,17 +22,12 @@ const computedEmitter = {
 export default {
   name: "Editor",
   props: {
-    value: String,
-    config: Object
+    value: String
   },
 
-  watch: {
-    config: {
-      deep: true,
-      handler() {
-        this.$refs["aceEditor"].reload();
-      }
-    }
+  mounted() {
+    const aceEditor = this.$refs["aceEditor"];
+    this.$store.dispatch("AceConfig/setEditorRef", aceEditor);
   },
 
   computed: {

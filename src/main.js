@@ -2,6 +2,7 @@ import Vue from "vue";
 import App from "./App.vue";
 import vuetify from "./plugins/vuetify";
 import AceEditor from "vue-editor-ace";
+import store from './store'
 const affix_grammar_js_module = import("affix-grammar-js");
 
 async function setupAffixGrammar(Vue, affix_grammar_js_module) {
@@ -21,6 +22,7 @@ async function setupAffixGrammar(Vue, affix_grammar_js_module) {
 
   new Vue({
     vuetify,
+    store,
     render: h => h(App)
   }).$mount("#app");
 })();
