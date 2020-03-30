@@ -67,11 +67,7 @@
               <v-tab-item>
                 <v-card light flat>
                   <v-card-text>
-                    <Editor
-                      v-model="src"
-                      @dirty="ctx = null"
-                      :config="config"
-                    />
+                    <Editor v-model="src" @dirty="ctx = null" />
                   </v-card-text>
                 </v-card>
               </v-tab-item>
@@ -123,31 +119,7 @@ export default {
     sentences: [],
     ctx: null,
     noMoreSentences: false,
-    bottomSheet: true,
-    config: {
-      // Language
-      lang: "haskell",
-      // Theme
-      theme: "github",
-      // only read.
-      readOnly: false,
-      // enable Autocompletion
-      autoCompletion: false,
-      showPrintMargin: false,
-      useWrapMode: true,
-      useSoftTabs: true,
-      tabSize: 4,
-      // enable vim keyboard
-      useVim: false,
-      // enable emmet.
-      useEmmet: false,
-      // enable beautify code.
-      useBeautifyCode: false,
-      // set cursor position.
-      cursorPosition: { row: 0, column: 0 },
-      // set page position (scroll).
-      pagePosition: 0
-    }
+    bottomSheet: true
   }),
 
   methods: {

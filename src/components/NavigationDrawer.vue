@@ -66,7 +66,10 @@
 
           <v-list-item>
             <v-list-item-content>
-              <v-switch v-model="useVim" label="Vim Keybindings"></v-switch>
+              <v-switch
+                @change="updateUseVim"
+                label="Vim Keybindings"
+              ></v-switch>
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
@@ -86,7 +89,6 @@ export default {
 
   data: () => ({
     drawer: false,
-    useVim: false,
     savesOpen: false,
     saves: [
       { title: "Test Grammar 1", key: "grammar1", modified: "Three days ago" },
@@ -98,7 +100,13 @@ export default {
     ],
     examplesOpen: false,
     settingsOpen: false
-  })
+  }),
+
+  methods: {
+    updateUseVim(value) {
+      this.$store.dispatch("AceConfig/setUseVim", value);
+    }
+  }
 };
 </script>
 
