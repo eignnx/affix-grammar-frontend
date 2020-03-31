@@ -10,6 +10,7 @@
   "dependencies": {
     "affix-grammar-js": "0.1.5",
     "core-js": "^3.6.4",
+    "pulldown-cmark-wasm": "^0.1.0",
     "vue": "^2.6.11",
     "vue-editor-ace": "^1.0.0",
     "vuetify": "^2.2.11",

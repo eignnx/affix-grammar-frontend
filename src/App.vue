@@ -46,20 +46,7 @@
               <v-tab-item>
                 <v-card light flat>
                   <v-card-text>
-                    <v-card v-for="(block, idx) in blocks" :key="idx">
-                      <v-card-text
-                        class="mb-3 body-1 font-weight-medium"
-                        v-if="block.Explanation"
-                      >
-                        {{ block.Explanation }}
-                      </v-card-text>
-                      <code
-                        style="width: 100%"
-                        class="pa-3"
-                        v-if="block.Code"
-                        >{{ block.Code }}</code
-                      >
-                    </v-card>
+                    <Reader :src="src" />
                   </v-card-text>
                 </v-card>
               </v-tab-item>
@@ -85,11 +72,13 @@
 
 <script>
 import Editor from "./components/Editor.vue";
+import Reader from "./components/Reader.vue";
 import NavigationDrawer from "./components/NavigationDrawer.vue";
 import SentencesWindow from "./components/SentencesWindow.vue";
 
 const HELLO_WORLD_EXAMPLE = `
--- Welcome to Affix Grammar!
+-- #Welcome to Affix Grammar!
+-- <h3>subheading</h3>
 
 -- Click the "Generate" button a few times to see what sentences are produced!
 
@@ -109,7 +98,7 @@ rule start
 export default {
   name: "App",
 
-  async created() {
+  created() {
     this.$vuetify.theme.dark = true;
   },
 
@@ -148,21 +137,11 @@ export default {
     }
   },
 
-  computed: {
-    blocks() {
-      const { LiterateParser } = this.$wasm.affix_grammar_js;
-      const parser = new LiterateParser(this.src);
-      const arr = [];
-      let value = parser.next();
-      while (!value.done) {
-        const block = value.value;
-        arr.push(block);
-        value = parser.next();
-      }
-      return arr;
-    }
-  },
-
-  components: { Editor, NavigationDrawer, SentencesWindow }
+  components: {
+    Editor,
+    Reader,
+    NavigationDrawer,
+    SentencesWindow
+  }
 };
 </script>
