@@ -1,30 +1,6 @@
 <template>
   <v-app id="affix-grammar-app">
-    <v-navigation-drawer v-model="drawer" app clipped>
-      <v-list dense>
-        <v-list-item link>
-          <v-list-item-action>
-            <v-icon>mdi-view-dashboard</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Dashboard</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item link>
-          <v-list-item-action>
-            <v-icon>mdi-settings</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Settings</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-
-    <v-app-bar app clipped-left>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title>Affix Grammar</v-toolbar-title>
-    </v-app-bar>
+    <NavigationDrawer />
 
     <v-content>
       <v-container fluid>
@@ -34,62 +10,68 @@
               <v-toolbar-title>Edit</v-toolbar-title>
               <v-spacer></v-spacer>
 
-              <v-switch
-                v-model="config.useVim"
-                label="Vim Keybindings"
-              ></v-switch>
+              <SentencesWindow :sentences="sentences" />
+
+              <template>
+                <v-btn
+                  class="mx-2"
+                  @click="doubleMaxIters"
+                  v-if="ctx !== null && noMoreSentences"
+                >
+                  <v-icon>mdi-plus</v-icon>
+                  Deeper Search
+                  {{ ctx !== null ? `(${ctx.maxTrials * 2})` : `` }}
+                </v-btn>
+
+                <v-btn class="mx-2" @click="generate" v-else>
+                  <v-icon>mdi-play</v-icon>Generate
+                </v-btn>
+              </template>
             </v-toolbar>
           </v-col>
         </v-row>
+
         <v-row>
           <v-col>
-            <Editor v-model="src" @dirty="ctx = null" :config="config" />
-          </v-col>
-          <v-col>
-            <v-card class="mx-auto">
-              <v-list>
-                <template>
-                  <v-btn
-                    class="mx-2"
-                    @click="doubleMaxIters"
-                    v-if="ctx !== null && noMoreSentences"
-                  >
-                    <v-icon>mdi-plus</v-icon>
-                    Deeper Search
-                    {{ ctx !== null ? `(${ctx.maxTrials * 2})` : `` }}
-                  </v-btn>
+            <v-tabs vertical color="pink">
+              <v-tab>
+                <v-icon left>mdi-book-open-variant</v-icon>
+                Read
+              </v-tab>
+              <v-tab>
+                <v-icon left>mdi-pencil</v-icon>
+                Edit
+              </v-tab>
 
-                  <v-btn class="mx-2" @click="generate" v-else>
-                    <v-icon>mdi-play</v-icon>
-                    Generate
-                  </v-btn>
-                </template>
-                <v-subheader>Generated Sentences </v-subheader>
-                <v-list-item-group>
-                  <template
-                    v-for="(sentence, index) in sentences.slice().reverse()"
-                  >
-                    <v-list-item :key="sentence" :disabled="ctx === null">
-                      <template>
-                        <v-list-item-content>
-                          <v-list-item-title v-text="sentence" />
-                        </v-list-item-content>
-                        <v-list-item-action>
-                          <v-list-item-action-text
-                            v-text="sentences.length - index"
-                          />
-                        </v-list-item-action>
-                      </template>
-                    </v-list-item>
+              <v-tab-item>
+                <v-card light flat>
+                  <v-card-text>
+                    <v-card v-for="(block, idx) in blocks" :key="idx">
+                      <v-card-text
+                        class="mb-3 body-1 font-weight-medium"
+                        v-if="block.Explanation"
+                      >
+                        {{ block.Explanation }}
+                      </v-card-text>
+                      <code
+                        style="width: 100%"
+                        class="pa-3"
+                        v-if="block.Code"
+                        >{{ block.Code }}</code
+                      >
+                    </v-card>
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
 
-                    <v-divider
-                      v-if="index + 1 < sentences.length"
-                      :key="index"
-                    ></v-divider>
-                  </template>
-                </v-list-item-group>
-              </v-list>
-            </v-card>
+              <v-tab-item>
+                <v-card light flat>
+                  <v-card-text>
+                    <Editor v-model="src" @dirty="ctx = null" />
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
+            </v-tabs>
           </v-col>
         </v-row>
       </v-container>
@@ -103,12 +85,14 @@
 
 <script>
 import Editor from "./components/Editor.vue";
-let ParserContext = null;
-import("affix-grammar-js").then(module => {
-  ParserContext = module.ParserContext;
-});
+import NavigationDrawer from "./components/NavigationDrawer.vue";
+import SentencesWindow from "./components/SentencesWindow.vue";
 
 const HELLO_WORLD_EXAMPLE = `
+-- Welcome to Affix Grammar!
+
+-- Click the "Generate" button a few times to see what sentences are produced!
+
 rule start
   = "Hello, World!"
   | "¡Hola Mundo!"
@@ -135,34 +119,12 @@ export default {
     sentences: [],
     ctx: null,
     noMoreSentences: false,
-    config: {
-      // Language
-      lang: "haskell",
-      // Theme
-      theme: "github",
-      // only read.
-      readOnly: false,
-      // enable Autocompletion
-      autoCompletion: false,
-      showPrintMargin: false,
-      useWrapMode: true,
-      useSoftTabs: true,
-      tabSize: 4,
-      // enable vim keyboard
-      useVim: false,
-      // enable emmet.
-      useEmmet: false,
-      // enable beautify code.
-      useBeautifyCode: false,
-      // set cursor position.
-      cursorPosition: { row: 0, column: 0 },
-      // set page position (scroll).
-      pagePosition: 0
-    }
+    bottomSheet: true
   }),
 
   methods: {
     generate() {
+      const { ParserContext } = this.$wasm.affix_grammar_js;
       if (this.ctx === null) {
         this.ctx = new ParserContext(this.src);
         this.sentences = [];
@@ -186,6 +148,21 @@ export default {
     }
   },
 
-  components: { Editor }
+  computed: {
+    blocks() {
+      const { LiterateParser } = this.$wasm.affix_grammar_js;
+      const parser = new LiterateParser(this.src);
+      const arr = [];
+      let value = parser.next();
+      while (!value.done) {
+        const block = value.value;
+        arr.push(block);
+        value = parser.next();
+      }
+      return arr;
+    }
+  },
+
+  components: { Editor, NavigationDrawer, SentencesWindow }
 };
 </script>
