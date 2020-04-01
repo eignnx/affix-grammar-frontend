@@ -3,6 +3,7 @@ import App from "./App.vue";
 import vuetify from "./plugins/vuetify";
 import AceEditor from "vue-editor-ace";
 import store from "./store";
+import router from './router'
 const affix_grammar_js_module = import("affix-grammar-js");
 
 async function setupWasmModules() {
@@ -25,6 +26,7 @@ async function setupWasmModules() {
   new Vue({
     vuetify,
     store,
+    router,
     render: h => h(App)
   }).$mount("#app");
 })();
