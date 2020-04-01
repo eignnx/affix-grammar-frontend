@@ -76,35 +76,26 @@ import Reader from "./components/Reader.vue";
 import NavigationDrawer from "./components/NavigationDrawer.vue";
 import SentencesWindow from "./components/SentencesWindow.vue";
 
-const HELLO_WORLD_EXAMPLE = `
--- # Welcome to Affix Grammar!
--- This is a [link](https://www.google.com)!
+const HELLO_WORLD_EXAMPLE_GIST = "d875c21f7b345567b0d95decdaca6636";
 
--- Click the \`Generate\` button a few times to see what sentences are produced!
-
-rule start
-  = "Hello, World!"
-  | "¡Hola Mundo!"
-  | "こんにちは世界！"
-  | "مرحبا بالعالم!"
-  | "Salamu, Dunia!"
-  | "ياخشىمۇسىز دۇنيا!"
-  | "Γειά σου Κόσμε!"
-  | "Привіт Світ!"
-  | "สวัสดีชาวโลก!"
-  | "Bonjour le monde!"
-`.trim();
+async function fetchGistContent(gistId) {
+  const resp = await fetch(`https://api.github.com/gists/${gistId}`);
+  const json = await resp.json();
+  const fileName = Object.keys(json.files)[0];
+  return json.files[fileName].content;
+}
 
 export default {
   name: "App",
 
-  created() {
+  async created() {
     this.$vuetify.theme.dark = true;
+    await this.loadGist(HELLO_WORLD_EXAMPLE_GIST);
   },
 
   data: () => ({
     drawer: false,
-    src: HELLO_WORLD_EXAMPLE,
+    src: "",
     sentences: [],
     ctx: null,
     noMoreSentences: false,
@@ -112,6 +103,18 @@ export default {
   }),
 
   methods: {
+    async loadGist(gistId) {
+      this.src = `-- Loading gist ${gistId}...`;
+      let content = null;
+      try {
+        content = await fetchGistContent(gistId);
+      } catch (e) {
+        this.src = `-- Error loading gist ${gistId}.`;
+        return;
+      }
+      this.src = content;
+    },
+
     generate() {
       const { ParserContext } = this.$wasm.affix_grammar_js;
       if (this.ctx === null) {
