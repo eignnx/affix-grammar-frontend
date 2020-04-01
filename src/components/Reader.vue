@@ -43,7 +43,13 @@ export default {
 
 <style>
 .explanation-block p {
-  margin-bottom: 0 !important;
+  margin-top: 1ch !important;
+  margin-bottom: 1ch !important;
+}
+
+.explanation-block blockquote {
+  font-family: monospace;
+  text-indent: 2ch;
 }
 
 .code-block {
