@@ -7,7 +7,15 @@
         <v-row>
           <v-col>
             <v-toolbar>
-              <v-toolbar-title>Edit</v-toolbar-title>
+              <v-toolbar-title>
+                <a :href="gistLink" v-if="gistLink">{{ title }}</a>
+                <span v-else>{{ title || "Edit" }}</span>
+              </v-toolbar-title>
+              <small class="ml-4" v-if="author !== null">
+                by
+                <a :href="authorLink" v-if="authorLink">{{ author }}</a>
+                <span v-else>UNKNOWN</span>
+              </small>
               <v-spacer></v-spacer>
 
               <SentencesWindow :sentences="sentences" />
@@ -54,7 +62,7 @@
               <v-tab-item>
                 <v-card light flat>
                   <v-card-text>
-                    <Editor v-model="src" @dirty="ctx = null" />
+                    <Editor v-model="src" @dirty="srcChanged" />
                   </v-card-text>
                 </v-card>
               </v-tab-item>
@@ -82,7 +90,13 @@ async function fetchGistContent(gistId) {
   const resp = await fetch(`https://api.github.com/gists/${gistId}`);
   const json = await resp.json();
   const fileName = Object.keys(json.files)[0];
-  return json.files[fileName].content;
+  return {
+    content: json.files[fileName].content,
+    title: fileName,
+    gistLink: json.html_url,
+    author: json.owner.login,
+    authorLink: json.owner.html_url
+  };
 }
 
 export default {
@@ -96,7 +110,10 @@ export default {
   },
 
   data: () => ({
-    drawer: false,
+    title: null,
+    gistLink: null,
+    author: null,
+    authorLink: null,
     src: "",
     sentences: [],
     ctx: null,
@@ -107,14 +124,33 @@ export default {
   methods: {
     async loadGist(gistId) {
       this.src = `-- Loading gist ${gistId}...`;
-      let content = null;
       try {
-        content = await fetchGistContent(gistId);
+        const {
+          content,
+          title,
+          gistLink,
+          author,
+          authorLink
+        } = await fetchGistContent(gistId);
+        this.src = content;
+        this.title = title;
+        this.gistLink = gistLink;
+        this.author = author;
+        this.authorLink = authorLink;
       } catch (e) {
         this.src = `-- Error loading gist ${gistId}.`;
-        return;
       }
-      this.src = content;
+    },
+
+    srcChanged() {
+      this.ctx = null;
+      const EDITIED_MARKER = " (edited)";
+      if (this.title && !this.title.endsWith(EDITIED_MARKER)) {
+        this.title = this.title + EDITIED_MARKER;
+        this.gistLink = null;
+        this.author = null;
+        this.authorLink = null;
+      }
     },
 
     generate() {
