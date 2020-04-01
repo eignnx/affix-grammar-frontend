@@ -90,7 +90,9 @@ export default {
 
   async created() {
     this.$vuetify.theme.dark = true;
-    await this.loadGist(HELLO_WORLD_EXAMPLE_GIST);
+    const params = new URLSearchParams(location.search);
+    const gist = params.get("gist") || HELLO_WORLD_EXAMPLE_GIST;
+    await this.loadGist(gist);
   },
 
   data: () => ({
