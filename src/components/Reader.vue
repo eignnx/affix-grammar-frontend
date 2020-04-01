@@ -35,9 +35,7 @@ export default {
     blocks() {
       const { LiterateParser } = this.$wasm.affix_grammar_js;
       const parser = new LiterateParser(this.src);
-      const arr = iterToArr(parser);
-      console.log("blocks:", arr);
-      return arr;
+      return iterToArr(parser);
     }
   }
 };
