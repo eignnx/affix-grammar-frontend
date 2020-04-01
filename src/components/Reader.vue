@@ -1,14 +1,14 @@
 <template>
   <section>
-    <v-card v-for="(block, idx) in blocks" :key="idx">
+    <v-card class="mb-5" v-for="(block, idx) in blocks" :key="idx">
       <v-card-text
-        class="mb-3 body-1 font-weight-medium"
+        class="explanation-block"
         v-if="block.Explanation"
-        v-html="block.Explanation"
+        v-html="block.Explanation.trimEnd()"
       />
-      <code style="width: 100%" class="pa-3" v-if="block.Code">{{
-        block.Code
-      }}</code>
+      <code class="pa-3 code-block" v-if="block.Code">
+        {{ block.Code }}
+      </code>
     </v-card>
   </section>
 </template>
@@ -24,16 +24,6 @@ function iterToArr(iter) {
   return arr;
 }
 
-function renderMarkdown(mdFormat) {
-  return block => {
-    if (block.Explanation) {
-      return { Explanation: mdFormat(block.Explanation) };
-    } else {
-      return block;
-    }
-  };
-}
-
 export default {
   name: "Reader",
 
@@ -44,10 +34,21 @@ export default {
   computed: {
     blocks() {
       const { LiterateParser } = this.$wasm.affix_grammar_js;
-      const { format } = this.$wasm.pulldown_cmark_wasm;
       const parser = new LiterateParser(this.src);
-      return iterToArr(parser).map(renderMarkdown(format));
+      const arr = iterToArr(parser);
+      console.log("blocks:", arr);
+      return arr;
     }
   }
 };
 </script>
+
+<style>
+.explanation-block p {
+  margin-bottom: 0 !important;
+}
+
+.code-block {
+  width: 100%;
+}
+</style>

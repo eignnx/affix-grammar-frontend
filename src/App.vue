@@ -77,10 +77,10 @@ import NavigationDrawer from "./components/NavigationDrawer.vue";
 import SentencesWindow from "./components/SentencesWindow.vue";
 
 const HELLO_WORLD_EXAMPLE = `
--- #Welcome to Affix Grammar!
--- <h3>subheading</h3>
+-- # Welcome to Affix Grammar!
+-- This is a [link](https://www.google.com)!
 
--- Click the "Generate" button a few times to see what sentences are produced!
+-- Click the \`Generate\` button a few times to see what sentences are produced!
 
 rule start
   = "Hello, World!"
