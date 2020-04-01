@@ -50,6 +50,7 @@ export default {
 .explanation-block blockquote {
   font-family: monospace;
   text-indent: 2ch;
+  display: block !important;
 }
 
 .code-block {
