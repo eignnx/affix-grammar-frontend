@@ -70,6 +70,17 @@
             </v-tabs>
           </v-col>
         </v-row>
+
+        <template>
+          <div class="text-center ma-2">
+            <v-snackbar v-model="errorSnack" :timeout="0" color="error">
+              {{ errorSnackMsg }}
+              <v-btn color="pink" text @click="errorSnack = false">
+                Close
+              </v-btn>
+            </v-snackbar>
+          </div>
+        </template>
       </v-container>
     </v-content>
 
@@ -96,7 +107,7 @@ async function fetchGistContent(gistId) {
     title: fileName,
     gistLink: json.html_url,
     author: json.owner.login,
-    authorLink: json.owner.html_url
+    authorLink: json.owner.html_url,
   };
 }
 
@@ -119,7 +130,9 @@ export default {
     sentences: [],
     ctx: null,
     noMoreSentences: false,
-    bottomSheet: true
+    bottomSheet: true,
+    errorSnack: false,
+    errorSnackMsg: "",
   }),
 
   methods: {
@@ -131,7 +144,7 @@ export default {
           title,
           gistLink,
           author,
-          authorLink
+          authorLink,
         } = await fetchGistContent(gistId);
         this.src = content;
         this.title = title;
@@ -168,7 +181,9 @@ export default {
         if (e == "Max iterations execeeded.") {
           this.noMoreSentences = true;
         } else {
-          throw e;
+          console.log(e);
+          this.errorSnackMsg = "Dynamic Error:\n" + printDynamicError(e);
+          this.errorSnack = true;
         }
       }
     },
@@ -176,14 +191,65 @@ export default {
     doubleMaxIters() {
       this.ctx.maxTrials *= 2;
       this.noMoreSentences = false;
-    }
+    },
   },
 
   components: {
     Editor,
     Reader,
     NavigationDrawer,
-    SentencesWindow
-  }
+    SentencesWindow,
+  },
 };
+
+function printDynamicError(e) {
+  if (e.UnboundRuleName) {
+    const { rule_name } = e.UnboundRuleName;
+    return `You typed '${rule_name}' where I was expecting a rule reference. \
+            Is this a typo? If you are trying to output a data variant, \
+            please put the '@' symbol in front.`;
+  }
+  if (e.WrongArityRuleReference) {
+    const {
+      arguments: args,
+      rule_name,
+      expected_len,
+    } = e.WrongArityRuleReference;
+    return `Hmmm. It looks like you didn't send the rule '${rule_name}' the \
+            correct number of values. I was expecting to get ${expected_len} \
+            ${pluralize("value", expected_len)}, but I got \
+            ${conj(args, "and")}.`;
+  }
+  if (e.InexhaustiveCaseAnalysis) {
+    const { rule_name, arguments: args } = e.InexhaustiveCaseAnalysis;
+    const fmt_args = args.map((arg) => arg.value);
+    return `Oops! Looks like the rule '${rule_name}' doesn't cover all \
+            possible cases. For instance, I don't know what to do when it's \
+            called like this: '${rule_name}.${fmt_args.join(".")}'.`;
+  }
+}
+
+function conj(arr, conjunction) {
+  switch (arr.length) {
+    case 0:
+      return "nothing";
+
+    case 1:
+      return `'${arr[0]}'`;
+
+    case 2:
+      return `'${arr[0]}' ${conjunction} '${arr[1]}'`;
+
+    default:
+      return `'${arr[0]}', ${conj(arr.slice(1), conjunction)}`;
+  }
+}
+
+function pluralize(word, n) {
+  if (n != 1) {
+    return word + "s";
+  } else {
+    return word;
+  }
+}
 </script>
