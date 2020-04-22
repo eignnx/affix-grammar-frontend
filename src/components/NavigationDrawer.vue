@@ -79,6 +79,10 @@
     <v-app-bar app clipped-left>
       <v-app-bar-nav-icon @click="drawer = !drawer" />
       <v-toolbar-title>Affix Grammar</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn href="/?gist=5658476af6dbd36dbc7f73594976e8dd">
+        <v-icon left>mdi-help-circle-outline</v-icon>Learn
+      </v-btn>
     </v-app-bar>
   </div>
 </template>

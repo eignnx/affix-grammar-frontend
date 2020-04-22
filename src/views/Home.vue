@@ -16,6 +16,7 @@
                 <a :href="authorLink" v-if="authorLink">{{ author }}</a>
                 <span v-else>UNKNOWN</span>
               </small>
+
               <v-spacer></v-spacer>
 
               <SentencesWindow :sentences="sentences" />
