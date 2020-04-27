@@ -182,7 +182,7 @@ export default {
           this.noMoreSentences = true;
         } else {
           console.log(e);
-          this.errorSnackMsg = "Dynamic Error:\n" + printDynamicError(e);
+          this.errorSnackMsg = "DYNAMIC ERROR: " + printDynamicError(e);
           this.errorSnack = true;
         }
       }
@@ -224,9 +224,17 @@ function printDynamicError(e) {
     const { rule_name, arguments: args } = e.InexhaustiveCaseAnalysis;
     const fmt_args = args.map((arg) => arg.value);
     return `Oops! Looks like the rule '${rule_name}' doesn't cover all \
-            possible cases. For instance, I don't know what to do when it's \
-            called like this: '${rule_name}.${fmt_args.join(".")}'.`;
+            possible cases. For instance, what sentence should \
+            '${rule_name}.${fmt_args.join(".")}' produce?`;
   }
+  if (e.NoDataVariantStringification) {
+    const { symbol } = e.NoDataVariantStringification;
+    return `I don't know how to properly stringify the data-variant \
+            '${symbol}'. You'll have to show my how like this: data ... = \
+            ${symbol} ("<textual representation of ${symbol} here>") | ...`;
+  }
+
+  return JSON.stringify(e);
 }
 
 function conj(arr, conjunction) {
