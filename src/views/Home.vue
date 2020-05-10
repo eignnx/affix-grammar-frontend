@@ -19,20 +19,18 @@
 
               <v-spacer></v-spacer>
 
-              <SentencesWindow :sentences="sentences" />
-
               <template>
                 <v-btn
+                  v-if="ctx !== null && noMoreSentences"
                   class="mx-2"
                   @click="doubleMaxIters"
-                  v-if="ctx !== null && noMoreSentences"
                 >
                   <v-icon>mdi-plus</v-icon>
                   Deeper Search
                   {{ ctx !== null ? `(${ctx.maxTrials * 2})` : `` }}
                 </v-btn>
 
-                <v-btn class="mx-2" @click="generate" v-else>
+                <v-btn v-else class="mx-2" @click="generate">
                   <v-icon>mdi-play</v-icon>Generate
                 </v-btn>
               </template>
@@ -41,6 +39,50 @@
         </v-row>
 
         <v-row>
+          <v-col v-if="sentencesWindow">
+            <v-card>
+              <v-banner
+                v-model="sentencesWindow"
+                transition="slide-x-transition"
+              >
+                <h3>Generated Sentences</h3>
+
+                <v-list>
+                  <v-list-item-group>
+                    <template
+                      v-for="(sentence, index) in sentences.slice().reverse()"
+                    >
+                      <v-list-item :key="sentence" disabled>
+                        <template>
+                          <v-list-item-content>
+                            <!-- <v-list-item-title v-text="sentence" /> -->
+                            <p v-text="sentence" />
+                          </v-list-item-content>
+                          <v-list-item-action>
+                            <v-list-item-action-text
+                              v-text="sentences.length - index"
+                            />
+                          </v-list-item-action>
+                        </template>
+                      </v-list-item>
+
+                      <v-divider
+                        v-if="index + 1 < sentences.length"
+                        :key="index"
+                      ></v-divider>
+                    </template>
+                  </v-list-item-group>
+                </v-list>
+
+                <template v-slot:actions="{ dismiss }">
+                  <v-btn text @click="dismiss">Close</v-btn>
+                </template>
+              </v-banner>
+            </v-card>
+          </v-col>
+          <!-- </v-row>
+
+        <v-row> -->
           <v-col>
             <v-tabs vertical color="pink">
               <v-tab>
@@ -94,7 +136,6 @@
 import Editor from "@/components/Editor.vue";
 import Reader from "@/components/Reader.vue";
 import NavigationDrawer from "@/components/NavigationDrawer.vue";
-import SentencesWindow from "@/components/SentencesWindow.vue";
 
 const HELLO_WORLD_EXAMPLE_GIST = "d875c21f7b345567b0d95decdaca6636";
 
@@ -133,6 +174,7 @@ export default {
     bottomSheet: true,
     errorSnack: false,
     errorSnackMsg: "",
+    sentencesWindow: false,
   }),
 
   methods: {
@@ -168,6 +210,7 @@ export default {
     },
 
     generate() {
+      this.sentencesWindow = "open";
       const { ParserContext } = this.$wasm.affix_grammar_js;
       if (this.ctx === null) {
         this.ctx = new ParserContext(this.src);
@@ -198,7 +241,6 @@ export default {
     Editor,
     Reader,
     NavigationDrawer,
-    SentencesWindow,
   },
 };
 
